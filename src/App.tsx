@@ -23,12 +23,12 @@ export const App = () => {
     if (todoText === "") return;
     const newTodos: { id: any; text: any; status: string } = {
       id: uuidv4(),
-      text: { todoText },
+      text: todoText,
       status: "作業中",
     };
 
     // 入力したTodoを現在入力済みのTodoリストの配列に追加
-    setTodos((newTodos) => [...todos, todoText]);
+    todos.push(newTodos);
 
     // Todoを入力欄を空白に変更
     setTodoText("");
