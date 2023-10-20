@@ -10,7 +10,6 @@ export const App = () => {
   const [todoText, setTodoText] = useState("");
   // Todoリストのstate管理
   const [todos, setTodos] = useState<TodoType[]>([]);
-
   // Todoの型を定義
   type TodoType = {
     id: string;
