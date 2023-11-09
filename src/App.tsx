@@ -6,10 +6,6 @@ import { Select } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 
 export const App = () => {
-  // Todo入力欄のstate管理
-  const [todoText, setTodoText] = useState("");
-  // Todoリストのstate管理
-  const [todos, setTodos] = useState<TodoType[]>([]);
   // Todoの型を定義
   type TodoType = {
     id: string;
@@ -17,12 +13,20 @@ export const App = () => {
     status: string;
   };
 
+  // Todo入力欄のstate管理
+  const [todoText, setTodoText] = useState("");
+  // Todoリストのstate管理
+  const [todos, setTodos] = useState<TodoType[]>([]);
+  // 絞り込みのstate管理
+  const [filter, setFilter] = useState("");
+
+  // Todo入力欄に文字が入力された時の処理
   const onChangeTodoText = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTodoText(e.target.value);
 
   // 追加ボタンを押した時の処理
   const onClickAdd = (e: React.FormEvent<HTMLFormElement>) => {
-    // 追加ボタンを押した時にページがリロードしない処理
+    // ページがリロードしない処理
     e.preventDefault();
     // Todo入力欄が空の時の処理
     if (todoText === "") return;
@@ -54,6 +58,13 @@ export const App = () => {
     });
     setTodos(newTodos);
   };
+  // Todoリストのステータスが変更された時の処理
+  const handleStatusChange = (
+    todo: TodoType,
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    console.log(todo, e);
+  };
 
   return (
     <>
@@ -71,12 +82,13 @@ export const App = () => {
             variant="outline"
             placeholder="Todoを入力"
           />
-          <Input type="submit" value="追加" />
+          <Button type="submit">追加</Button>
         </form>
       </div>
       <div className="Narrow-down-area">
         絞り込み
-        <Select placeholder="全て" width="15%">
+        <Select defaultValue="全て" width="15%">
+          <option value="全て">全て</option>
           <option value="未着手">未着手</option>
           <option value="着手">着手</option>
           <option value="完了">完了</option>
@@ -98,7 +110,13 @@ export const App = () => {
                   width="85%"
                   variant="outline"
                 />
-                <Select placeholder="未着手" width="15%">
+                <Select
+                  value={todo.status}
+                  // placeholder="未着手"
+                  width="15%"
+                  onChange={(e) => handleStatusChange(todo.id, e)}
+                >
+                  <option value="未着手">未着手</option>
                   <option value="着手">着手</option>
                   <option value="完了">完了</option>
                 </Select>
