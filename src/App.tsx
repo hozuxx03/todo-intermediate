@@ -17,6 +17,8 @@ export const App = () => {
   const [todoText, setTodoText] = useState("");
   // Todoリストのstate管理
   const [todos, setTodos] = useState<TodoType[]>([]);
+  // Todoリストステータス変更のstate管理
+
   // 絞り込みのstate管理
   const [filter, setFilter] = useState("");
 
@@ -60,11 +62,15 @@ export const App = () => {
   };
   // Todoリストのステータスが変更された時の処理
   const handleStatusChange = (
-    todo: TodoType,
+    todo: { id: string; text: string; status: string },
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     console.log(todo, e);
   };
+  const newArray = todos.map((todo) =>
+    todo.id === id ? { ...todo, status: e.target.value } : todo
+  );
+  setTodos(newArray);
 
   return (
     <>
@@ -114,7 +120,7 @@ export const App = () => {
                   value={todo.status}
                   // placeholder="未着手"
                   width="15%"
-                  onChange={(e) => handleStatusChange(todo.id, e)}
+                  onChange={(e) => handleStatusChange(todo, e)}
                 >
                   <option value="未着手">未着手</option>
                   <option value="着手">着手</option>
