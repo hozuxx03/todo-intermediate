@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@chakra-ui/react";
 import { Box } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
@@ -17,10 +17,10 @@ export const App = () => {
   const [todoText, setTodoText] = useState("");
   // Todoリストのstate管理
   const [todos, setTodos] = useState<TodoType[]>([]);
-  // Todoリストステータス変更のstate管理
-
-  // 絞り込みのstate管理
-  const [filter, setFilter] = useState("");
+  // フィルターのstate管理
+  const [filter, setFilter] = useState("未着手");
+  // 絞り込まれたTodoリストのstate管理
+  const [filteredTodos, setFilteredTodos] = useState<TodoType[]>([]);
 
   // Todo入力欄に文字が入力された時の処理
   const onChangeTodoText = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -50,6 +50,25 @@ export const App = () => {
     setTodos(newTodos);
   };
 
+  useEffect(() => {
+    const filteringTodos = () => {
+      switch (filter) {
+        case "未着手":
+          setFilteredTodos(todos.filter((todo) => todo.status === "未着手"));
+          break;
+        case "着手":
+          setFilteredTodos(todos.filter((todo) => todo.status === "着手"));
+          break;
+        case "完了":
+          setFilteredTodos(todos.filter((todo) => todo.status === "完了"));
+          break;
+        default:
+          setFilteredTodos(todos);
+      }
+    };
+    filteringTodos();
+  }, [filter, todos]);
+
   // 編集ボタンが押された時の処理
   const onClickEdit = (id: string, text: string) => {
     const newTodos = todos.map((todo) => {
@@ -62,15 +81,18 @@ export const App = () => {
   };
   // Todoリストのステータスが変更された時の処理
   const handleStatusChange = (
-    todo: { id: string; text: string; status: string },
+    targetTodo: { id: string; text: string; status: string },
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    console.log(todo, e);
+    console.log(targetTodo, e);
+
+    // Todoリストを更新
+    const newArray = todos.map((todo) =>
+      todo.id === targetTodo.id ? { ...todo, status: e.target.value } : todo
+    );
+    setTodos(newArray);
+    console.log(newArray);
   };
-  const newArray = todos.map((todo) =>
-    todo.id === id ? { ...todo, status: e.target.value } : todo
-  );
-  setTodos(newArray);
 
   return (
     <>
@@ -93,7 +115,12 @@ export const App = () => {
       </div>
       <div className="Narrow-down-area">
         絞り込み
-        <Select defaultValue="全て" width="15%">
+        <Select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          defaultValue="全て"
+          width="15%"
+        >
           <option value="全て">全て</option>
           <option value="未着手">未着手</option>
           <option value="着手">着手</option>
@@ -105,7 +132,7 @@ export const App = () => {
       </Box>
       <div>
         <ul>
-          {todos.map((todo) => (
+          {filteredTodos.map((todo) => (
             <React.Fragment>
               <li key={todo.id}>
                 <Input
