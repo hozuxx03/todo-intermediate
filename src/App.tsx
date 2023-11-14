@@ -70,7 +70,7 @@ export const App = () => {
   }, [filter, todos]);
 
   // 編集ボタンが押された時の処理
-  const onChangeEdit = (id: string, text: string) => {
+  const handleEditTodoText = (id: string, text: string) => {
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
         todo.text = text;
@@ -129,11 +129,11 @@ export const App = () => {
       <div>
         <ul>
           {filteredTodos.map((todo) => (
-            <React.Fragment key={todo.id}>
+            <div key={todo.id}>
               <Input
                 value={todo.text}
                 type="text"
-                onChange={(e) => onChangeEdit(todo.id, e.target.value)}
+                onChange={(e) => handleEditTodoText(todo.id, e.target.value)}
                 size="md"
                 width="85%"
                 variant="outline"
@@ -154,7 +154,7 @@ export const App = () => {
               >
                 削除
               </Button>
-            </React.Fragment>
+            </div>
           ))}
         </ul>
       </div>
